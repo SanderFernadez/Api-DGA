@@ -1,4 +1,5 @@
 using Api_DGA.Application.Dtos;
+using Api_DGA.Application.Dtos.SaleProduct;
 
 namespace Api_DGA.Application.Interfaces.Services
 {

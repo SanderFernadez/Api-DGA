@@ -3,6 +3,7 @@ using Api_DGA.Application.Interfaces.Services;
 using Api_DGA.Application.Dtos;
 using Api_DGA.Core.Entities;
 using AutoMapper;
+using Api_DGA.Application.Dtos.Sale;
 
 namespace Api_DGA.Application.Services
 {
