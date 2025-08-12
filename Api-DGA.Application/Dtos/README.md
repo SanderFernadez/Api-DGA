@@ -25,6 +25,30 @@ Este documento detalla los pasos necesarios para completar la implementación de
 - [x] Mappings y Controllers actualizados
 - [x] Interfaces de servicios actualizadas con métodos faltantes
 
+### ✅ **FASE 1.6: Actualización de Servicios de Clientes (COMPLETADO)**
+- [x] **Actualizar DTOs de clientes para incluir campo Name**
+  - [x] `CreateClientDto.cs` - Agregado campo Name
+  - [x] `UpdateClientDto.cs` - Agregado campo Name
+  - [x] `GetClientDto.cs` - Agregado campo Name
+  - [x] `ClientSearchDto.cs` - Agregado campo Name
+
+- [x] **Actualizar repositorio de clientes**
+  - [x] `IClientRepository.cs` - Agregados métodos GetByNameAsync y ExistsByNameAsync
+  - [x] `ClientRepository.cs` - Implementados métodos de búsqueda por nombre
+
+- [x] **Actualizar servicio de clientes**
+  - [x] `IClientService.cs` - Agregados métodos GetByNameAsync y ExistsByNameAsync
+  - [x] `ClientService.cs` - Implementados métodos de búsqueda por nombre
+
+- [x] **Actualizar controlador de clientes**
+  - [x] `ClientsController.cs` - Agregado endpoint GET /api/clients/search?name={name}
+
+- [x] **Actualizar seeder de clientes**
+  - [x] `ClientSeeder.cs` - Agregados nombres reales para los clientes de ejemplo
+
+- [x] **Corregir herencia de entidad Client**
+  - [x] `Client.cs` - Agregada palabra clave 'new' para el campo Id
+
 ### ✅ **FASE 2: Configuración de Base de Datos (COMPLETADO)**
 - [x] **Configurar Entity Framework Core**
   ```bash
@@ -426,4 +450,4 @@ curl -X POST "https://localhost:7001/api/products" \
 
 ---
 
-**Estado Actual**: ✅ Fase 1-7.5 Completadas | ✅ DTOs Organizados | ✅ Seeders Implementados | 🔄 Fase 8 en Progreso
+**Estado Actual**: ✅ Fase 1-7.5 Completadas | ✅ DTOs Organizados | ✅ Seeders Implementados | ✅ Servicios de Clientes Actualizados | 🔄 Fase 8 en Progreso

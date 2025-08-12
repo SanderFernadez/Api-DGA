@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace APi_DGA_Infrastructure.Migrations
 {
     [DbContext(typeof(InfrastructureContext))]
-    [Migration("20250812152619_FirstMigration")]
+    [Migration("20250812181709_FirstMigration")]
     partial class FirstMigration
     {
         /// <inheritdoc />
@@ -37,6 +37,10 @@ namespace APi_DGA_Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
                         .IsRequired()
