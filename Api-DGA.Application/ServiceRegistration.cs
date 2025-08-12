@@ -2,6 +2,8 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
+using Api_DGA.Application.Interfaces.Services;
+using Api_DGA.Application.Services;
 
 namespace Api_DGA.Application
 {
@@ -9,17 +11,15 @@ namespace Api_DGA.Application
     {
         public static void AddApplicationLayer(this IServiceCollection services)
         {
-          // services.AddAutoMapper(Assembly.GetExecutingAssembly());
-
+            // Registrar AutoMapper con los perfiles de mapeo
+            services.AddAutoMapper(cfg => cfg.AddMaps(Assembly.GetExecutingAssembly()));
 
             #region Services
-            //services.AddTransient(typeof(IGenericService<,,>), typeof(GenericService<,,>));
-            //services.AddTransient<IIngredientService, IngredientService>();
-            //services.AddTransient<IOrderService, OrderService>();
-            //services.AddTransient<IPlateService, PlateService>();
-            //services.AddTransient<ITableService, TableService>();
-            //services.AddTransient<IPlateService, PlateService>();
-            //services.AddTransient<IPlateIngredientService, PlateIngredientService>();
+            services.AddTransient(typeof(IGenericService<,,,>), typeof(GenericService<,,,>));
+            services.AddTransient<IClientService, ClientService>();
+            services.AddTransient<IProductService, ProductService>();
+            services.AddTransient<ISaleService, SaleService>();
+            services.AddTransient<ISaleProductService, SaleProductService>();
             #endregion
         }
     }
