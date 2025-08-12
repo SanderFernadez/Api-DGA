@@ -68,4 +68,7 @@ app.MapControllers();
 
 app.MapHealthChecks("/health");
 
+// Ejecutar seeding automático
+await app.Services.RunAsyncSeed();
+
 app.Run();

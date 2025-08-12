@@ -173,8 +173,59 @@ Este documento detalla los pasos necesarios para completar la implementación de
           services.AddTransient<ISaleRepository, SaleRepository>();
           services.AddTransient<ISaleProductRepository, SaleProductRepository>();
           #endregion
+
+          #region Seeders
+          services.AddTransient<IDataSeeder, ClientSeeder>();
+          services.AddTransient<IDataSeeder, ProductSeeder>();
+          services.AddTransient<IDataSeeder, SaleSeeder>();
+          services.AddTransient<DatabaseSeeder>();
+          #endregion
+      }
+
+      /// <summary>
+      /// Ejecuta el seeding automático de la base de datos al iniciar la aplicación
+      /// </summary>
+      public static async Task RunAsyncSeed(this IServiceProvider serviceProvider)
+      {
+          using (var scope = serviceProvider.CreateScope())
+          {
+              var services = scope.ServiceProvider;
+              try
+              {
+                  var databaseSeeder = services.GetRequiredService<DatabaseSeeder>();
+                  await databaseSeeder.SeedAsync();
+              }
+              catch (Exception ex)
+              {
+                  Console.WriteLine($"❌ Error durante el seeding automático: {ex.Message}");
+              }
+          }
       }
   }
+  ```
+
+### ✅ **FASE 7.5: Seeders de Datos (COMPLETADO)**
+- [x] **Crear estructura de seeders**
+  - [x] `IDataSeeder.cs` - Interfaz para seeders
+  - [x] `ClientSeeder.cs` - Seeder para clientes (10 clientes de ejemplo)
+  - [x] `ProductSeeder.cs` - Seeder para productos (15 productos de tecnología)
+  - [x] `SaleSeeder.cs` - Seeder para ventas (25 ventas con productos aleatorios)
+  - [x] `DatabaseSeeder.cs` - Coordinador principal de seeders
+
+- [x] **Configurar seeding automático**
+  ```csharp
+  // En Program.cs
+  await app.Services.RunAsyncSeed();
+  ```
+
+- [x] **Registrar seeders en ServiceRegistration**
+  ```csharp
+  #region Seeders
+  services.AddTransient<IDataSeeder, ClientSeeder>();
+  services.AddTransient<IDataSeeder, ProductSeeder>();
+  services.AddTransient<IDataSeeder, SaleSeeder>();
+  services.AddTransient<DatabaseSeeder>();
+  #endregion
   ```
 
 ### 🔄 **FASE 8: Pruebas Unitarias**
@@ -316,6 +367,12 @@ Api-DGA/
 │   ├── Contexts/
 │   │   └── InfrastructureContext.cs ✅
 │   ├── Repositories/ ✅
+│   ├── Seeders/ ✅
+│   │   ├── IDataSeeder.cs
+│   │   ├── ClientSeeder.cs
+│   │   ├── ProductSeeder.cs
+│   │   ├── SaleSeeder.cs
+│   │   └── DatabaseSeeder.cs
 │   └── ServiceRegistration.cs ✅
 ├── Api-DGA/
 │   ├── Controllers/ ✅
@@ -369,4 +426,4 @@ curl -X POST "https://localhost:7001/api/products" \
 
 ---
 
-**Estado Actual**: ✅ Fase 1-7 Completadas | ✅ DTOs Organizados | 🔄 Fase 8 en Progreso
+**Estado Actual**: ✅ Fase 1-7.5 Completadas | ✅ DTOs Organizados | ✅ Seeders Implementados | 🔄 Fase 8 en Progreso
