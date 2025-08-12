@@ -1,10 +1,12 @@
 ﻿
 
+using Api_DGA.Core.Common;
+
 namespace Api_DGA.Core.Entities
 {
-    public class Client
+    public class Client: CommontFields
     {
-        public int Id { get; set; }
+        public new int Id { get; set; }
 
         public string Email { get; set; } = string.Empty;
 
