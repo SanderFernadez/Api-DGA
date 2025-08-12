@@ -249,5 +249,42 @@ namespace Api_DGA.Controllers
                 });
             }
         }
+
+        /// <summary>
+        /// Busca clientes por nombre (búsqueda parcial)
+        /// </summary>
+        /// <param name="name">Nombre del cliente a buscar</param>
+        /// <returns>Lista de clientes que coinciden con el nombre</returns>
+        [HttpGet("search")]
+        public async Task<ActionResult<List<GetClientDto>>> SearchByName([FromQuery] string name)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(name))
+                {
+                    return BadRequest(new ApiResponseDto
+                    {
+                        Success = false,
+                        Message = "El parámetro 'name' es requerido"
+                    });
+                }
+
+                var clients = await _clientService.GetByNameAsync(name);
+                return Ok(new ApiResponseDto<List<GetClientDto>>
+                {
+                    Success = true,
+                    Data = clients,
+                    Message = $"Se encontraron {clients.Count} clientes que coinciden con '{name}'"
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseDto
+                {
+                    Success = false,
+                    Message = $"Error al buscar clientes: {ex.Message}"
+                });
+            }
+        }
     }
 }

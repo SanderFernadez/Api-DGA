@@ -52,5 +52,26 @@ namespace Api_DGA.Application.Services
         {
             return await _clientRepository.ExistsByEmailAsync(email);
         }
+
+        /// <summary>
+        /// Obtiene clientes por nombre (búsqueda parcial)
+        /// </summary>
+        /// <param name="name">Nombre del cliente a buscar</param>
+        /// <returns>Lista de clientes que coinciden con el nombre</returns>
+        public async Task<List<GetClientDto>> GetByNameAsync(string name)
+        {
+            var clients = await _clientRepository.GetByNameAsync(name);
+            return _mapper.Map<List<GetClientDto>>(clients);
+        }
+
+        /// <summary>
+        /// Verifica si existe un cliente con el nombre especificado
+        /// </summary>
+        /// <param name="name">Nombre a verificar</param>
+        /// <returns>True si existe, false en caso contrario</returns>
+        public async Task<bool> ExistsByNameAsync(string name)
+        {
+            return await _clientRepository.ExistsByNameAsync(name);
+        }
     }
 }
