@@ -15,13 +15,22 @@ builder.Services.AddSwaggerGen(c =>
     { 
         Title = "API-DGA", 
         Version = "v1",
-        Description = "API para gestión de productos y ventas",
+        Description = "API REST para gestión de productos y ventas. Desarrollada con .NET 8, Entity Framework Core y SQL Server.",
         Contact = new OpenApiContact
         {
             Name = "API-DGA Team",
             Email = "support@api-dga.com"
+        },
+        License = new OpenApiLicense
+        {
+            Name = "MIT License",
+            Url = new Uri("https://opensource.org/licenses/MIT")
         }
     });
+    
+    // Configurar esquemas de respuesta
+    c.MapType<DateTime>(() => new OpenApiSchema { Type = "string", Format = "date-time" });
+    c.MapType<decimal>(() => new OpenApiSchema { Type = "number", Format = "decimal" });
 });
 
 // Registrar servicios de infraestructura y aplicación
@@ -34,7 +43,15 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAll", builder =>
         builder.AllowAnyOrigin()
                .AllowAnyMethod()
-               .AllowAnyHeader());
+               .AllowAnyHeader()
+               .WithExposedHeaders("Content-Disposition")); // Para descargas de archivos
+    
+    // Política específica para desarrollo
+    options.AddPolicy("Development", builder =>
+        builder.WithOrigins("http://localhost:3000", "http://localhost:8080", "http://localhost:5173")
+               .AllowAnyMethod()
+               .AllowAnyHeader()
+               .AllowCredentials());
 });
 
 builder.Services.AddHealthChecks();
