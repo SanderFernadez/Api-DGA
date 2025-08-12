@@ -5,12 +5,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Api_DGA.Application
+namespace APi_DGA_Infrastructure
 {
     public static class ServiceRegistration
     {
 
-        public static void AddPersistenceInfrastructure(this IServiceCollection services, IConfiguration configuration)
+        public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
             #region Contexts
             if (configuration.GetValue<bool>("UseInMemoryDatabase"))

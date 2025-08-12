@@ -3,17 +3,13 @@ namespace Api_DGA.Core.Entities
 {
     public class SaleProduct
     {
-        public int Id { get; set; }
+        public int SaleId { get; set; }
+        public int ProductId { get; set; }
+        public int Quantity { get; set; }
+        public decimal UnitPrice { get; set; }
 
-        public DateTime Date { get; set; }
-
-        public int ClientId { get; set; }
-
-        public Client Client { get; set; } = null!;
-
-        public decimal Total { get; set; }
-
-        // Relación con productos
-        public ICollection<SaleProduct> SaleProducts { get; set; } = new List<SaleProduct>();
+        // Propiedades de navegación
+        public Sale Sale { get; set; } = null!;
+        public Product Product { get; set; } = null!;
     }
 }

@@ -1,3 +1,5 @@
+using Api_DGA.Application;
+using APi_DGA_Infrastructure;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,9 +8,9 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-//builder.Services.AddPersistenceInfrastructure(builder.Configuration);
+builder.Services.AddInfrastructure(builder.Configuration);
 //builder.Services.AddIdentityInfrastructure(builder.Configuration);
-//builder.Services.AddApplicationLayer();
+builder.Services.AddApplicationLayer();
 builder.Services.AddHealthChecks();
 //builder.Services.AddSwaggerExtension();
 //builder.Services.AddApiVersioningExtension();
