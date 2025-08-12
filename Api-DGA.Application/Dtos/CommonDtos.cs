@@ -13,6 +13,8 @@ namespace Api_DGA.Application.Dtos
         public int TotalPages { get; set; }
         public bool HasPreviousPage { get; set; }
         public bool HasNextPage { get; set; }
+        public int? PreviousPageNumber { get; set; }
+        public int? NextPageNumber { get; set; }
     }
 
     /// <summary>
@@ -25,6 +27,7 @@ namespace Api_DGA.Application.Dtos
         public int PageSize { get; set; } = 10;
         public string? SortBy { get; set; }
         public bool IsAscending { get; set; } = true;
+        public bool IncludeInactive { get; set; } = false;
     }
 
     /// <summary>
@@ -37,6 +40,8 @@ namespace Api_DGA.Application.Dtos
         public string Message { get; set; } = string.Empty;
         public T? Data { get; set; }
         public List<string> Errors { get; set; } = new List<string>();
+        public int StatusCode { get; set; } = 200;
+        public DateTime Timestamp { get; set; } = DateTime.UtcNow;
     }
 
     /// <summary>
@@ -47,5 +52,30 @@ namespace Api_DGA.Application.Dtos
         public bool Success { get; set; }
         public string Message { get; set; } = string.Empty;
         public List<string> Errors { get; set; } = new List<string>();
+        public int StatusCode { get; set; } = 200;
+        public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+    }
+
+    /// <summary>
+    /// DTO para opciones de selección
+    /// </summary>
+    public class SelectOptionDto
+    {
+        public string Value { get; set; } = string.Empty;
+        public string Text { get; set; } = string.Empty;
+        public bool Selected { get; set; }
+        public bool Disabled { get; set; }
+        public string? Group { get; set; }
+    }
+
+    /// <summary>
+    /// DTO para estadísticas básicas
+    /// </summary>
+    public class StatisticsDto
+    {
+        public int TotalCount { get; set; }
+        public int ActiveCount { get; set; }
+        public int InactiveCount { get; set; }
+        public DateTime LastUpdated { get; set; } = DateTime.UtcNow;
     }
 }

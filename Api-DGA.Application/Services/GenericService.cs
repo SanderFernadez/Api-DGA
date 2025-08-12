@@ -4,74 +4,130 @@ using AutoMapper;
 
 namespace Api_DGA.Application.Services
 {
-    public class GenericService<SaveViewModel, ViewModel, Model> : IGenericService<SaveViewModel, ViewModel, Model>
-          where SaveViewModel : class
-          where ViewModel : class
-          where Model : class
+    /// <summary>
+    /// Servicio genérico que maneja DTOs para operaciones CRUD
+    /// </summary>
+    /// <typeparam name="TCreateDto">DTO para crear entidades</typeparam>
+    /// <typeparam name="TUpdateDto">DTO para actualizar entidades</typeparam>
+    /// <typeparam name="TGetDto">DTO para obtener entidades</typeparam>
+    /// <typeparam name="TEntity">Tipo de entidad</typeparam>
+    public class GenericService<TCreateDto, TUpdateDto, TGetDto, TEntity> : IGenericService<TCreateDto, TUpdateDto, TGetDto, TEntity>
+        where TCreateDto : class
+        where TUpdateDto : class
+        where TGetDto : class
+        where TEntity : class
     {
-        private readonly IGenericRepository<Model> _repository;
+        private readonly IGenericRepository<TEntity> _repository;
         private readonly IMapper _mapper;
 
-        public GenericService(IGenericRepository<Model> repository, IMapper mapper)
+        public GenericService(IGenericRepository<TEntity> repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
         }
 
-        public virtual async Task Update(SaveViewModel vm, int id)
-        {
-            Model entity = _mapper.Map<Model>(vm);
-            await _repository.UpdateAsync(entity, id);
-        }
-
-        public virtual async Task<SaveViewModel> Add(SaveViewModel vm)
-        {
-            Model entity = _mapper.Map<Model>(vm);
-
-            entity = await _repository.AddAsync(entity);
-
-            SaveViewModel entityVm = _mapper.Map<SaveViewModel>(entity);
-
-            return entityVm;
-        }
-
-        public virtual async Task<List<SaveViewModel>> AddRange(List<SaveViewModel> vm)
-        {
-            List<Model> entities = _mapper.Map<List<Model>>(vm);
-
-            entities = await _repository.AddRangeAsync(entities);
-
-            List<SaveViewModel> entitiesVm = _mapper.Map<List<SaveViewModel>>(entities);
-
-            return entitiesVm;
-        }
-
-        public virtual async Task Delete(int id)
-        {
-            var product = await _repository.GetByIdAsync(id);
-            await _repository.DeleteAsync(product);
-        }
-
-        public virtual async Task<SaveViewModel> GetByIdSaveViewModel(int id)
+        /// <summary>
+        /// Obtiene una entidad por su ID
+        /// </summary>
+        /// <param name="id">ID de la entidad</param>
+        /// <returns>DTO de la entidad encontrada</returns>
+        public virtual async Task<TGetDto?> GetByIdAsync(int id)
         {
             var entity = await _repository.GetByIdAsync(id);
-
-            SaveViewModel vm = _mapper.Map<SaveViewModel>(entity);
-            return vm;
+            return _mapper.Map<TGetDto>(entity);
         }
 
-        public virtual async Task<List<ViewModel>> GetAllListViewModel()
+        /// <summary>
+        /// Obtiene todas las entidades
+        /// </summary>
+        /// <returns>Lista de DTOs de entidades</returns>
+        public virtual async Task<List<TGetDto>> GetAllAsync()
         {
-            var entityList = await _repository.GetAllListAsync();
-
-            return _mapper.Map<List<ViewModel>>(entityList);
+            var entities = await _repository.GetAllListAsync();
+            return _mapper.Map<List<TGetDto>>(entities);
         }
 
-        public virtual IQueryable<ViewModel> GetAllQueryViewModel()
+        /// <summary>
+        /// Crea una nueva entidad
+        /// </summary>
+        /// <param name="createDto">DTO con los datos para crear</param>
+        /// <returns>DTO de la entidad creada</returns>
+        public virtual async Task<TGetDto> CreateAsync(TCreateDto createDto)
         {
-            var entityList = _repository.GetAllQuery();
+            var entity = _mapper.Map<TEntity>(createDto);
+            var createdEntity = await _repository.AddAsync(entity);
+            return _mapper.Map<TGetDto>(createdEntity);
+        }
 
-            return _mapper.Map<IQueryable<ViewModel>>(entityList);
+        /// <summary>
+        /// Actualiza una entidad existente
+        /// </summary>
+        /// <param name="id">ID de la entidad</param>
+        /// <param name="updateDto">DTO con los datos para actualizar</param>
+        /// <returns>DTO de la entidad actualizada</returns>
+        public virtual async Task<TGetDto> UpdateAsync(int id, TUpdateDto updateDto)
+        {
+            var entity = _mapper.Map<TEntity>(updateDto);
+            await _repository.UpdateAsync(entity, id);
+            
+            // Obtener la entidad actualizada
+            var updatedEntity = await _repository.GetByIdAsync(id);
+            return _mapper.Map<TGetDto>(updatedEntity);
+        }
+
+        /// <summary>
+        /// Elimina una entidad
+        /// </summary>
+        /// <param name="id">ID de la entidad</param>
+        /// <returns>True si se eliminó correctamente</returns>
+        public virtual async Task<bool> DeleteAsync(int id)
+        {
+            try
+            {
+                var entity = await _repository.GetByIdAsync(id);
+                if (entity == null)
+                    return false;
+
+                await _repository.DeleteAsync(entity);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Crea múltiples entidades
+        /// </summary>
+        /// <param name="createDtos">Lista de DTOs para crear</param>
+        /// <returns>Lista de DTOs de entidades creadas</returns>
+        public virtual async Task<List<TGetDto>> CreateRangeAsync(List<TCreateDto> createDtos)
+        {
+            var entities = _mapper.Map<List<TEntity>>(createDtos);
+            var createdEntities = await _repository.AddRangeAsync(entities);
+            return _mapper.Map<List<TGetDto>>(createdEntities);
+        }
+
+        /// <summary>
+        /// Verifica si existe una entidad
+        /// </summary>
+        /// <param name="id">ID de la entidad</param>
+        /// <returns>True si existe</returns>
+        public virtual async Task<bool> ExistsAsync(int id)
+        {
+            var entity = await _repository.GetByIdAsync(id);
+            return entity != null;
+        }
+
+        /// <summary>
+        /// Obtiene el total de entidades
+        /// </summary>
+        /// <returns>Total de entidades</returns>
+        public virtual async Task<int> GetCountAsync()
+        {
+            var entities = await _repository.GetAllListAsync();
+            return entities.Count;
         }
     }
 }
