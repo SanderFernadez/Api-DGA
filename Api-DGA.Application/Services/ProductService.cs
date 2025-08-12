@@ -1,6 +1,5 @@
 ﻿using Api_DGA.Application.Interfaces.Repositories;
 using Api_DGA.Application.Interfaces.Services;
-using Api_DGA.Application.Dtos;
 using Api_DGA.Core.Entities;
 using AutoMapper;
 using Api_DGA.Application.Dtos.Product;
@@ -63,6 +62,16 @@ namespace Api_DGA.Application.Services
         public async Task<bool> ExistsByNameAsync(string name)
         {
             return await _productRepository.ExistsByNameAsync(name);
+        }
+
+        /// <summary>
+        /// Busca productos por nombre (alias para GetByNameAsync)
+        /// </summary>
+        /// <param name="name">Nombre del producto a buscar</param>
+        /// <returns>Lista de productos que coinciden con el nombre</returns>
+        public async Task<List<GetProductDto>> SearchByNameAsync(string name)
+        {
+            return await GetByNameAsync(name);
         }
     }
 }

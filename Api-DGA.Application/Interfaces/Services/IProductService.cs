@@ -15,6 +15,13 @@ namespace Api_DGA.Application.Interfaces.Services
         Task<List<GetProductDto>> GetByNameAsync(string name);
 
         /// <summary>
+        /// Busca productos por nombre (alias para GetByNameAsync)
+        /// </summary>
+        /// <param name="name">Nombre del producto a buscar</param>
+        /// <returns>Lista de productos que coinciden con el nombre</returns>
+        Task<List<GetProductDto>> SearchByNameAsync(string name);
+
+        /// <summary>
         /// Obtiene productos con stock bajo
         /// </summary>
         /// <param name="minStock">Stock mínimo</param>

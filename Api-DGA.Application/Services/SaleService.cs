@@ -1,6 +1,5 @@
 ﻿using Api_DGA.Application.Interfaces.Repositories;
 using Api_DGA.Application.Interfaces.Services;
-using Api_DGA.Application.Dtos;
 using Api_DGA.Core.Entities;
 using AutoMapper;
 using Api_DGA.Application.Dtos.Sale;
@@ -89,6 +88,31 @@ namespace Api_DGA.Application.Services
                 return null;
 
             return _mapper.Map<GetSaleDetailDto>(sale);
+        }
+
+        /// <summary>
+        /// Obtiene una venta con detalles por ID (alias para GetSaleDetailAsync)
+        /// </summary>
+        /// <param name="id">ID de la venta</param>
+        /// <returns>Venta con detalles completos</returns>
+        public async Task<GetSaleDetailDto?> GetByIdWithDetailsAsync(int id)
+        {
+            return await GetSaleDetailAsync(id);
+        }
+
+        /// <summary>
+        /// Obtiene reporte de ventas
+        /// </summary>
+        /// <param name="startDate">Fecha de inicio (opcional)</param>
+        /// <param name="endDate">Fecha de fin (opcional)</param>
+        /// <returns>Lista de reportes de ventas</returns>
+        public async Task<List<SaleReportDto>> GetSalesReportAsync(DateTime? startDate = null, DateTime? endDate = null)
+        {
+            var sales = await _saleRepository.GetByDateRangeAsync(
+                startDate ?? DateTime.MinValue, 
+                endDate ?? DateTime.MaxValue);
+            
+            return _mapper.Map<List<SaleReportDto>>(sales);
         }
     }
 }

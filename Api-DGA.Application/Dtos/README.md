@@ -13,6 +13,18 @@ Este documento detalla los pasos necesarios para completar la implementación de
 - [x] Servicios genéricos y específicos implementados
 - [x] Interfaces definidas
 
+### ✅ **FASE 1.5: Organización de DTOs (COMPLETADO)**
+- [x] DTOs divididos en archivos separados por entidad
+- [x] Estructura de carpetas organizada:
+  - [x] `Client/` - DTOs para clientes
+  - [x] `Product/` - DTOs para productos
+  - [x] `Sale/` - DTOs para ventas
+  - [x] `SaleProduct/` - DTOs para productos en ventas
+  - [x] `Common/` - DTOs comunes y utilitarios
+- [x] Namespaces actualizados en todos los archivos
+- [x] Mappings y Controllers actualizados
+- [x] Interfaces de servicios actualizadas con métodos faltantes
+
 ### ✅ **FASE 2: Configuración de Base de Datos (COMPLETADO)**
 - [x] **Configurar Entity Framework Core**
   ```bash
@@ -267,26 +279,48 @@ Api-DGA/
 │       └── CommontFields.cs ✅
 ├── Api-DGA.Application/
 │   ├── Dtos/
-│   │   ├── ClientDtos.cs ✅
-│   │   ├── ProductDtos.cs ✅
-│   │   ├── SaleDtos.cs ✅
-│   │   ├── SaleProductDtos.cs ✅
-│   │   └── CommonDtos.cs ✅
+│   │   ├── Client/ ✅
+│   │   │   ├── GetClientDto.cs
+│   │   │   ├── CreateClientDto.cs
+│   │   │   ├── UpdateClientDto.cs
+│   │   │   └── ClientSearchDto.cs
+│   │   ├── Product/ ✅
+│   │   │   ├── GetProductDto.cs
+│   │   │   ├── CreateProductDto.cs
+│   │   │   ├── UpdateProductDto.cs
+│   │   │   ├── ProductSearchDto.cs
+│   │   │   └── TopSellingProductDto.cs
+│   │   ├── Sale/ ✅
+│   │   │   ├── GetSaleDto.cs
+│   │   │   ├── GetSaleDetailDto.cs
+│   │   │   ├── CreateSaleDto.cs
+│   │   │   ├── UpdateSaleDto.cs
+│   │   │   └── SaleReportDto.cs
+│   │   ├── SaleProduct/ ✅
+│   │   │   ├── GetSaleProductDto.cs
+│   │   │   ├── CreateSaleProductDto.cs
+│   │   │   └── UpdateSaleProductDto.cs
+│   │   └── Common/ ✅
+│   │       ├── ApiResponseDto.cs
+│   │       ├── PaginatedResultDto.cs
+│   │       ├── SearchFilterDto.cs
+│   │       ├── SelectOptionDto.cs
+│   │       └── StatisticsDto.cs
 │   ├── Interfaces/
 │   │   ├── Repositories/ ✅
 │   │   └── Services/ ✅
 │   ├── Services/ ✅
-│   ├── Mappings/ 🔄
+│   ├── Mappings/ ✅
 │   └── Validators/ 🔄
 ├── APi-DGA-Infrastructure/
 │   ├── Contexts/
 │   │   └── InfrastructureContext.cs ✅
 │   ├── Repositories/ ✅
-│   └── ServiceRegistration.cs 🔄
+│   └── ServiceRegistration.cs ✅
 ├── Api-DGA/
-│   ├── Controllers/ 🔄
-│   ├── Program.cs 🔄
-│   └── appsettings.json 🔄
+│   ├── Controllers/ ✅
+│   ├── Program.cs ✅
+│   └── appsettings.json ✅
 └── Api-DGA.Tests/ 🔄
 ```
 
@@ -335,4 +369,4 @@ curl -X POST "https://localhost:7001/api/products" \
 
 ---
 
-**Estado Actual**: ✅ Fase 1-7 Completadas | 🔄 Fase 8 en Progreso
+**Estado Actual**: ✅ Fase 1-7 Completadas | ✅ DTOs Organizados | 🔄 Fase 8 en Progreso

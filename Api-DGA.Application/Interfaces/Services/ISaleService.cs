@@ -1,4 +1,3 @@
-using Api_DGA.Application.Dtos;
 using Api_DGA.Application.Dtos.Sale;
 
 namespace Api_DGA.Application.Interfaces.Services
@@ -52,5 +51,20 @@ namespace Api_DGA.Application.Interfaces.Services
         /// <param name="id">ID de la venta</param>
         /// <returns>Venta con detalles completos</returns>
         Task<GetSaleDetailDto?> GetSaleDetailAsync(int id);
+
+        /// <summary>
+        /// Obtiene una venta con detalles por ID (alias para GetSaleDetailAsync)
+        /// </summary>
+        /// <param name="id">ID de la venta</param>
+        /// <returns>Venta con detalles completos</returns>
+        Task<GetSaleDetailDto?> GetByIdWithDetailsAsync(int id);
+
+        /// <summary>
+        /// Obtiene reporte de ventas
+        /// </summary>
+        /// <param name="startDate">Fecha de inicio (opcional)</param>
+        /// <param name="endDate">Fecha de fin (opcional)</param>
+        /// <returns>Lista de reportes de ventas</returns>
+        Task<List<SaleReportDto>> GetSalesReportAsync(DateTime? startDate = null, DateTime? endDate = null);
     }
 }
