@@ -67,8 +67,16 @@ namespace Api_DGA.Application.Services
         /// <returns>DTO de la entidad actualizada</returns>
         public virtual async Task<TGetDto> UpdateAsync(int id, TUpdateDto updateDto)
         {
-            var entity = _mapper.Map<TEntity>(updateDto);
-            await _repository.UpdateAsync(entity, id);
+            // Verificar que la entidad existe
+            var existingEntity = await _repository.GetByIdAsync(id);
+            if (existingEntity == null)
+                throw new ArgumentException($"Entity with id {id} not found");
+
+            // Mapear el DTO a la entidad existente
+            _mapper.Map(updateDto, existingEntity);
+            
+            // Actualizar en el repositorio
+            await _repository.UpdateAsync(existingEntity, id);
             
             // Obtener la entidad actualizada
             var updatedEntity = await _repository.GetByIdAsync(id);

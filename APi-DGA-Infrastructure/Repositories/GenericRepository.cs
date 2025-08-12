@@ -30,8 +30,30 @@ namespace APi_DGA_Infrastructure.Repositories
 
         public virtual async Task UpdateAsync(Entity entity, int id)
         {
-            var entry = await _dbContext.Set<Entity>().FindAsync(id);
-            _dbContext.Entry(entry).CurrentValues.SetValues(entity);
+            var existingEntity = await _dbContext.Set<Entity>().FindAsync(id);
+            if (existingEntity == null)
+                throw new ArgumentException($"Entity with id {id} not found");
+
+            // Obtener las propiedades de la entidad
+            var entityType = typeof(Entity);
+            var properties = entityType.GetProperties();
+
+            // Copiar valores de las propiedades, excluyendo la clave primaria
+            foreach (var property in properties)
+            {
+                // Excluir propiedades que son claves primarias o navegación
+                if (property.Name.Equals("Id", StringComparison.OrdinalIgnoreCase) ||
+                    (property.PropertyType.IsClass && property.PropertyType != typeof(string)))
+                    continue;
+
+                var value = property.GetValue(entity);
+                if (value != null)
+                {
+                    property.SetValue(existingEntity, value);
+                }
+            }
+
+            _dbContext.Entry(existingEntity).State = EntityState.Modified;
             await _dbContext.SaveChangesAsync();
         }
 

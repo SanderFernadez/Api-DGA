@@ -18,6 +18,7 @@ namespace Api_DGA.Application.Mappings
 
             // Mapeo de UpdateClientDto a Client
             CreateMap<UpdateClientDto, Client>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.Sales, opt => opt.Ignore());
 
             // Mapeo de Client a GetClientDto
