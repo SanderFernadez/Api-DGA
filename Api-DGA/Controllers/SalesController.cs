@@ -304,6 +304,143 @@ namespace Api_DGA.Controllers
         }
 
         /// <summary>
+        /// Obtiene todas las ventas con productos detallados
+        /// </summary>
+        /// <returns>Lista de todas las ventas con productos</returns>
+        [HttpGet("with-products")]
+        public async Task<ActionResult<ApiResponseDto<object>>> GetAllWithProducts()
+        {
+            try
+            {
+                var salesWithProducts = await _context.Sales
+                    .Include(s => s.Client)
+                    .Include(s => s.SaleProducts)
+                    .ThenInclude(sp => sp.Product)
+                    .Select(s => new
+                    {
+                        s.Id,
+                        s.ClientId,
+                        s.Date,
+                        s.Total,
+                        Client = new
+                        {
+                            s.Client.Id,
+                            s.Client.Name,
+                            s.Client.Email,
+                            s.Client.Phone
+                        },
+                        SaleProducts = s.SaleProducts.Select(sp => new
+                        {
+                            sp.SaleId,
+                            sp.ProductId,
+                            sp.Quantity,
+                            sp.UnitPrice,
+                            Subtotal = sp.Quantity * sp.UnitPrice,
+                            Product = new
+                            {
+                                sp.Product.Id,
+                                sp.Product.Name,
+                                sp.Product.Description,
+                                sp.Product.Price,
+                                sp.Product.Stock
+                            }
+                        }).ToList()
+                    })
+                    .ToListAsync();
+
+                return Ok(new ApiResponseDto<object>
+                {
+                    Success = true,
+                    Data = salesWithProducts,
+                    Message = "Todas las ventas con productos obtenidas exitosamente"
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseDto<object>
+                {
+                    Success = false,
+                    Data = new { Error = ex.Message },
+                    Message = $"Error al obtener las ventas con productos: {ex.Message}"
+                });
+            }
+        }
+
+        /// <summary>
+        /// Obtiene una venta específica con productos y cliente
+        /// </summary>
+        /// <param name="saleId">ID de la venta</param>
+        /// <returns>Venta específica con productos y cliente</returns>
+        [HttpGet("{saleId}/with-products")]
+        public async Task<ActionResult<ApiResponseDto<object>>> GetSaleWithProducts(int saleId)
+        {
+            try
+            {
+                var saleWithProducts = await _context.Sales
+                    .Include(s => s.Client)
+                    .Include(s => s.SaleProducts)
+                    .ThenInclude(sp => sp.Product)
+                    .Where(s => s.Id == saleId)
+                    .Select(s => new
+                    {
+                        s.Id,
+                        s.ClientId,
+                        s.Date,
+                        s.Total,
+                        Client = new
+                        {
+                            s.Client.Id,
+                            s.Client.Name,
+                            s.Client.Email,
+                            s.Client.Phone
+                        },
+                        SaleProducts = s.SaleProducts.Select(sp => new
+                        {
+                            sp.SaleId,
+                            sp.ProductId,
+                            sp.Quantity,
+                            sp.UnitPrice,
+                            Subtotal = sp.Quantity * sp.UnitPrice,
+                            Product = new
+                            {
+                                sp.Product.Id,
+                                sp.Product.Name,
+                                sp.Product.Description,
+                                sp.Product.Price,
+                                sp.Product.Stock
+                            }
+                        }).ToList()
+                    })
+                    .FirstOrDefaultAsync();
+
+                if (saleWithProducts == null)
+                {
+                    return NotFound(new ApiResponseDto<object>
+                    {
+                        Success = false,
+                        Message = "Venta no encontrada"
+                    });
+                }
+
+                return Ok(new ApiResponseDto<object>
+                {
+                    Success = true,
+                    Data = saleWithProducts,
+                    Message = "Venta con productos obtenida exitosamente"
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseDto<object>
+                {
+                    Success = false,
+                    Data = new { Error = ex.Message },
+                    Message = $"Error al obtener la venta con productos: {ex.Message}"
+                });
+            }
+        }
+
+        /// <summary>
         /// Obtiene ventas por cliente con productos detallados
         /// </summary>
         /// <param name="clientId">ID del cliente</param>
@@ -321,6 +458,7 @@ namespace Api_DGA.Controllers
                     .Select(s => new
                     {
                         s.Id,
+                        s.ClientId,
                         s.Date,
                         s.Total,
                         Client = new
@@ -330,22 +468,22 @@ namespace Api_DGA.Controllers
                             s.Client.Email,
                             s.Client.Phone
                         },
-                                                 Products = s.SaleProducts.Select(sp => new
-                         {
-                             SaleId = sp.SaleId,
-                             ProductId = sp.ProductId,
-                             sp.Quantity,
-                             sp.UnitPrice,
-                             Subtotal = sp.Quantity * sp.UnitPrice,
-                             Product = new
-                             {
-                                 sp.Product.Id,
-                                 sp.Product.Name,
-                                 sp.Product.Description,
-                                 sp.Product.Price,
-                                 sp.Product.Stock
-                             }
-                         }).ToList()
+                        SaleProducts = s.SaleProducts.Select(sp => new
+                        {
+                            sp.SaleId,
+                            sp.ProductId,
+                            sp.Quantity,
+                            sp.UnitPrice,
+                            Subtotal = sp.Quantity * sp.UnitPrice,
+                            Product = new
+                            {
+                                sp.Product.Id,
+                                sp.Product.Name,
+                                sp.Product.Description,
+                                sp.Product.Price,
+                                sp.Product.Stock
+                            }
+                        }).ToList()
                     })
                     .ToListAsync();
 
@@ -363,6 +501,67 @@ namespace Api_DGA.Controllers
                     Success = false,
                     Data = new { Error = ex.Message },
                     Message = $"Error al obtener las ventas del cliente {clientId}: {ex.Message}"
+                });
+            }
+        }
+
+        /// <summary>
+        /// Obtiene productos con información del cliente
+        /// </summary>
+        /// <returns>Lista de productos con información del cliente</returns>
+        [HttpGet("product-with-client")]
+        public async Task<ActionResult<ApiResponseDto<object>>> GetProductsWithClient()
+        {
+            try
+            {
+                var productsWithClient = await _context.SaleProducts
+                    .Include(sp => sp.Product)
+                    .Include(sp => sp.Sale)
+                    .ThenInclude(s => s.Client)
+                    .Select(sp => new
+                    {
+                        sp.ProductId,
+                        sp.Quantity,
+                        sp.UnitPrice,
+                        Subtotal = sp.Quantity * sp.UnitPrice,
+                        Product = new
+                        {
+                            sp.Product.Id,
+                            sp.Product.Name,
+                            sp.Product.Description,
+                            sp.Product.Price,
+                            sp.Product.Stock
+                        },
+                        Sale = new
+                        {
+                            sp.Sale.Id,
+                            sp.Sale.Date,
+                            sp.Sale.Total,
+                            Client = new
+                            {
+                                sp.Sale.Client.Id,
+                                sp.Sale.Client.Name,
+                                sp.Sale.Client.Email,
+                                sp.Sale.Client.Phone
+                            }
+                        }
+                    })
+                    .ToListAsync();
+
+                return Ok(new ApiResponseDto<object>
+                {
+                    Success = true,
+                    Data = productsWithClient,
+                    Message = "Productos con información del cliente obtenidos exitosamente"
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponseDto<object>
+                {
+                    Success = false,
+                    Data = new { Error = ex.Message },
+                    Message = $"Error al obtener productos con información del cliente: {ex.Message}"
                 });
             }
         }
