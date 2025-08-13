@@ -7,7 +7,7 @@ namespace APi_DGA_Infrastructure.Repositories
 {
     public class GenericRepository<Entity> : IGenericRepository<Entity> where Entity : class
     {
-        private readonly InfrastructureContext _dbContext;
+        protected readonly InfrastructureContext _dbContext;
 
         public GenericRepository(InfrastructureContext dbContext)
         {

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Api_DGA.Application.Interfaces.Services;
 using Api_DGA.Application.Dtos.Product;
 using Api_DGA.Application.Dtos.Common;
@@ -11,6 +12,7 @@ namespace Api_DGA.Controllers
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize] // Proteger todo el controlador
     public class ProductsController : ControllerBase
     {
         private readonly IProductService _productService;
@@ -119,6 +121,7 @@ namespace Api_DGA.Controllers
         /// <param name="updateDto">Datos actualizados del producto</param>
         /// <returns>Producto actualizado</returns>
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<ActionResult<GetProductDto>> Update(int id, [FromBody] UpdateProductDto updateDto)
         {
             try
@@ -147,6 +150,7 @@ namespace Api_DGA.Controllers
         /// <param name="id">ID del producto</param>
         /// <returns>Resultado de la eliminación</returns>
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<ActionResult> Delete(int id)
         {
             try
