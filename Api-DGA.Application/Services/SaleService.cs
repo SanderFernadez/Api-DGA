@@ -3,6 +3,7 @@ using Api_DGA.Application.Interfaces.Services;
 using Api_DGA.Core.Entities;
 using AutoMapper;
 using Api_DGA.Application.Dtos.Sale;
+using Api_DGA.Application.Dtos.SaleProduct;
 
 namespace Api_DGA.Application.Services
 {
@@ -12,12 +13,61 @@ namespace Api_DGA.Application.Services
     public class SaleService : GenericService<CreateSaleDto, UpdateSaleDto, GetSaleDto, Sale>, ISaleService
     {
         private readonly ISaleRepository _saleRepository;
+        private readonly ISaleProductRepository _saleProductRepository;
         private readonly IMapper _mapper;
 
-        public SaleService(ISaleRepository saleRepository, IMapper mapper) : base(saleRepository, mapper)
+        public SaleService(ISaleRepository saleRepository, ISaleProductRepository saleProductRepository, IMapper mapper) : base(saleRepository, mapper)
         {
             _saleRepository = saleRepository;
+            _saleProductRepository = saleProductRepository;
             _mapper = mapper;
+        }
+
+        /// <summary>
+        /// Crea una nueva venta con sus productos
+        /// </summary>
+        /// <param name="createDto">DTO con los datos de la venta y productos</param>
+        /// <returns>DTO de la venta creada</returns>
+        public override async Task<GetSaleDto> CreateAsync(CreateSaleDto createDto)
+        {
+            // Crear la venta principal
+            var sale = new Sale
+            {
+                ClientId = createDto.ClientId,
+                Date = DateTime.Now,
+                Total = 0 // Se calculará después
+            };
+
+            // Guardar la venta para obtener el ID
+            var createdSale = await _saleRepository.AddAsync(sale);
+
+            // Calcular el total y crear los productos de la venta
+            decimal total = 0;
+            var saleProducts = new List<SaleProduct>();
+
+            foreach (var productDto in createDto.SaleProducts)
+            {
+                var saleProduct = new SaleProduct
+                {
+                    SaleId = createdSale.Id,
+                    ProductId = productDto.ProductId,
+                    Quantity = productDto.Quantity,
+                    UnitPrice = productDto.UnitPrice
+                };
+
+                saleProducts.Add(saleProduct);
+                total += productDto.Quantity * productDto.UnitPrice;
+            }
+
+            // Guardar los productos de la venta
+            await _saleProductRepository.AddRangeAsync(saleProducts);
+
+            // Actualizar el total de la venta
+            createdSale.Total = total;
+            await _saleRepository.UpdateAsync(createdSale, createdSale.Id);
+
+            // Retornar la venta creada
+            return _mapper.Map<GetSaleDto>(createdSale);
         }
 
         /// <summary>
