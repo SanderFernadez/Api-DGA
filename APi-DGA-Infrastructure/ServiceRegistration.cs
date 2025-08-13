@@ -34,9 +34,16 @@ namespace APi_DGA_Infrastructure
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<ISaleRepository, SaleRepository>();
             services.AddTransient<ISaleProductRepository, SaleProductRepository>();
+            
+            // Repositorios de autenticación
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IRoleRepository, RoleRepository>();
+            services.AddTransient<IUserRoleRepository, UserRoleRepository>();
             #endregion
 
             #region Seeders
+            services.AddTransient<IDataSeeder, RoleSeeder>();
+            services.AddTransient<IDataSeeder, UserSeeder>();
             services.AddTransient<IDataSeeder, ClientSeeder>();
             services.AddTransient<IDataSeeder, ProductSeeder>();
             services.AddTransient<IDataSeeder, SaleSeeder>();
@@ -57,7 +64,9 @@ namespace APi_DGA_Infrastructure
 
                 try
                 {
+                    Console.WriteLine("🔍 Verificando servicios de seeding...");
                     var databaseSeeder = services.GetRequiredService<DatabaseSeeder>();
+                    Console.WriteLine("✅ DatabaseSeeder encontrado");
                     
                     Console.WriteLine("🌱 Iniciando seeding automático de la base de datos...");
                     await databaseSeeder.SeedAsync();
@@ -66,6 +75,7 @@ namespace APi_DGA_Infrastructure
                 catch (Exception ex)
                 {
                     Console.WriteLine($"❌ Error durante el seeding automático: {ex.Message}");
+                    Console.WriteLine($"📋 Stack trace: {ex.StackTrace}");
                     // No lanzar la excepción para que la aplicación pueda continuar
                 }
             }

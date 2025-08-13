@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Api_DGA.Application.Interfaces.Services;
 using Api_DGA.Application.Dtos.Sale;
 using Api_DGA.Application.Dtos.Common;
@@ -12,6 +13,7 @@ namespace Api_DGA.Controllers
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize] // Proteger todo el controlador de ventas
     public class SalesController : ControllerBase
     {
         private readonly ISaleService _saleService;

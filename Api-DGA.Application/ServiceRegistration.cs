@@ -20,6 +20,10 @@ namespace Api_DGA.Application
             services.AddTransient<IProductService, ProductService>();
             services.AddTransient<ISaleService, SaleService>();
             services.AddTransient<ISaleProductService, SaleProductService>();
+            
+            // Servicios de autenticación
+            services.AddTransient<IAuthService, AuthService>();
+            services.AddTransient<IJwtService, JwtService>();
             #endregion
         }
     }
